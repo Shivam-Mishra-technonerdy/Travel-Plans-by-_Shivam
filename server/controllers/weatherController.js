@@ -6,7 +6,7 @@ exports.getCurrentWeather = async (req, res) => {
     const { location } = req.params;
 
     const response = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${process.env.WEATHER_API_KEY}`
+      `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${process.env.WEATHER_API_KEY}`,
     );
 
     const weatherData = {
@@ -36,7 +36,7 @@ exports.getForecast = async (req, res) => {
     const { location } = req.params;
 
     const response = await axios.get(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=${process.env.WEATHER_API_KEY}`
+      `https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=${process.env.WEATHER_API_KEY}`,
     );
 
     // Process forecast data

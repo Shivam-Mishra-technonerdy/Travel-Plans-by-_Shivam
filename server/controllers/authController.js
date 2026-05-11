@@ -28,8 +28,11 @@ exports.register = async (req, res, next) => {
       { expiresIn: "5d" },
       (err, token) => {
         if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-      }
+        res.json({
+          token,
+          user: { id: user.id, name: user.name, email: user.email },
+        });
+      },
     );
   } catch (err) {
     next(err);
@@ -65,8 +68,11 @@ exports.login = async (req, res, next) => {
       { expiresIn: "5d" },
       (err, token) => {
         if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-      }
+        res.json({
+          token,
+          user: { id: user.id, name: user.name, email: user.email },
+        });
+      },
     );
   } catch (err) {
     next(err);
@@ -94,7 +100,7 @@ exports.updateProfile = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: updateFields },
-      { new: true }
+      { new: true },
     ).select("-password");
 
     res.json(user);

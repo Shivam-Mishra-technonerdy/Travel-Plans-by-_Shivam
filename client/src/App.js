@@ -9,7 +9,6 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 // Import components
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -32,13 +31,13 @@ function App() {
           <div className="App">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route 
-                path="/dashboard/*" 
+              <Route
+                path="/dashboard/*"
                 element={
                   <PrivateRoute>
                     <Dashboard />
                   </PrivateRoute>
-                } 
+                }
               />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -47,7 +46,14 @@ function App() {
           </div>
         </Router>
       </ThemeProvider>
-      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+      />
     </Provider>
   );
 }

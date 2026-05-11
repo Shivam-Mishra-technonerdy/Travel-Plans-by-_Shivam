@@ -10,7 +10,14 @@ const PrivateRoute = ({ children }) => {
   // Still loading OR we have a token but auth hasn't resolved yet — show spinner
   if (loading || (token && isAuthenticated === null)) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <CircularProgress size={48} />
       </Box>
     );

@@ -1,9 +1,9 @@
 // routes/destinations.js
-const router = require('express').Router();
-const Destination = require('../models/Destination');
+const router = require("express").Router();
+const Destination = require("../models/Destination");
 
 // Sab destinations
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   const { city, state, type } = req.query;
   let filter = {};
   if (city) filter.city = city;
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // Search destinations for autocomplete
-router.get('/search', async (req, res) => {
+router.get("/search", async (req, res) => {
   try {
     const { q } = req.query;
     if (!q) {
@@ -23,18 +23,18 @@ router.get('/search', async (req, res) => {
     // Case-insensitive regex search by name or city
     const data = await Destination.find({
       $or: [
-        { name: { $regex: q, $options: 'i' } },
-        { city: { $regex: q, $options: 'i' } }
-      ]
+        { name: { $regex: q, $options: "i" } },
+        { city: { $regex: q, $options: "i" } },
+      ],
     }).limit(10);
     res.json(data);
-  } catch(err) {
-    res.status(500).json({ error: 'Server error' });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
   }
 });
 
 // Single destination by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   const data = await Destination.findById(req.params.id);
   res.json(data);
 });

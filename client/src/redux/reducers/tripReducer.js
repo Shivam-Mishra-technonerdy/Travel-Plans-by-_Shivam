@@ -45,7 +45,7 @@ export default function tripReducer(state = initialState, action) {
       return {
         ...state,
         trips: state.trips.map((trip) =>
-          trip._id === action.payload._id ? action.payload : trip
+          trip._id === action.payload._id ? action.payload : trip,
         ),
         currentTrip: action.payload,
         loading: false,

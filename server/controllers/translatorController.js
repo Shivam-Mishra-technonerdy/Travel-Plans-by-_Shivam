@@ -8,7 +8,9 @@ exports.translateText = async (req, res) => {
     const { text, sourceLanguage, targetLanguage } = req.body;
 
     if (!text || !targetLanguage) {
-      return res.status(400).json({ msg: "Text and target language are required" });
+      return res
+        .status(400)
+        .json({ msg: "Text and target language are required" });
     }
 
     const options = { to: targetLanguage };

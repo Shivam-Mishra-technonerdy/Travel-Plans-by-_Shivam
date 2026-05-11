@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Routes, Route, useNavigate, Link, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Link,
+  useLocation,
+} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
@@ -82,22 +88,38 @@ const Dashboard = () => {
   const drawer = (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {/* Logo */}
-      <Box sx={{ p: 2.5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{
+          p: 2.5,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Box sx={{
-            width: 38, height: 38, borderRadius: "10px",
-            background: "linear-gradient(135deg, #1976D2 0%, #00BCD4 100%)",
-            display: "flex", alignItems: "center", justifyContent: "center"
-          }}>
+          <Box
+            sx={{
+              width: 38,
+              height: 38,
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #1976D2 0%, #00BCD4 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <ExploreIcon sx={{ color: "white", fontSize: 22 }} />
           </Box>
-          <Typography variant="h6" sx={{
-            fontWeight: 900,
-            background: "linear-gradient(45deg, #1976D2 30%, #00BCD4 90%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            letterSpacing: "-0.5px"
-          }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 900,
+              background: "linear-gradient(45deg, #1976D2 30%, #00BCD4 90%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              letterSpacing: "-0.5px",
+            }}
+          >
             PackGo
           </Typography>
         </Box>
@@ -106,16 +128,39 @@ const Dashboard = () => {
 
       {/* User Info */}
       <Box sx={{ p: 2.5 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1.5, borderRadius: 3, bgcolor: "primary.light", cursor: "pointer" }}
-          onClick={() => { navigate("/dashboard/profile"); setMobileOpen(false); }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            p: 1.5,
+            borderRadius: 3,
+            bgcolor: "primary.light",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            navigate("/dashboard/profile");
+            setMobileOpen(false);
+          }}
+        >
           <Avatar
             alt={user?.name || "User"}
-            sx={{ width: 42, height: 42, bgcolor: "primary.main", fontWeight: 700, fontSize: 16 }}
+            sx={{
+              width: 42,
+              height: 42,
+              bgcolor: "primary.main",
+              fontWeight: 700,
+              fontSize: 16,
+            }}
           >
             {user?.name?.[0]?.toUpperCase() || "U"}
           </Avatar>
           <Box sx={{ flex: 1, overflow: "hidden" }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "primary.dark" }} noWrap>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 700, color: "primary.dark" }}
+              noWrap
+            >
               {user?.name || "Traveler"}
             </Typography>
             <Typography variant="caption" sx={{ color: "primary.main" }} noWrap>
@@ -146,7 +191,12 @@ const Dashboard = () => {
                 "&:hover": { bgcolor: "rgba(63, 81, 181, 0.08)" },
               }}
             >
-              <ListItemIcon sx={{ minWidth: 40, color: isActive(item.path) ? "white" : "text.secondary" }}>
+              <ListItemIcon
+                sx={{
+                  minWidth: 40,
+                  color: isActive(item.path) ? "white" : "text.secondary",
+                }}
+              >
                 {item.icon}
               </ListItemIcon>
               <ListItemText
@@ -163,9 +213,19 @@ const Dashboard = () => {
         <ListItem disablePadding>
           <ListItemButton
             onClick={handleLogout}
-            sx={{ borderRadius: 2.5, color: "error.main", "&:hover": { bgcolor: "error.light" } }}>
-            <ListItemIcon sx={{ minWidth: 40, color: "error.main" }}><LogoutIcon /></ListItemIcon>
-            <ListItemText primary="Logout" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.9rem" }} />
+            sx={{
+              borderRadius: 2.5,
+              color: "error.main",
+              "&:hover": { bgcolor: "error.light" },
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 40, color: "error.main" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{ fontWeight: 600, fontSize: "0.9rem" }}
+            />
           </ListItemButton>
         </ListItem>
       </List>
@@ -174,13 +234,19 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
+      <Box
+        component="nav"
+        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
-          sx={{ display: { xs: "block", md: "none" }, "& .MuiDrawer-paper": { width: drawerWidth } }}
+          sx={{
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": { width: drawerWidth },
+          }}
         >
           {drawer}
         </Drawer>
@@ -188,7 +254,12 @@ const Dashboard = () => {
           variant="permanent"
           sx={{
             display: { xs: "none", md: "block" },
-            "& .MuiDrawer-paper": { width: drawerWidth, borderRight: "1px solid", borderColor: "divider", boxShadow: "2px 0 12px rgba(0,0,0,0.04)" }
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              borderRight: "1px solid",
+              borderColor: "divider",
+              boxShadow: "2px 0 12px rgba(0,0,0,0.04)",
+            },
           }}
           open
         >
@@ -196,40 +267,79 @@ const Dashboard = () => {
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, width: { md: `calc(100% - ${drawerWidth}px)` }, bgcolor: "grey.50" }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          bgcolor: "grey.50",
+        }}
+      >
         <AppBar
           position="sticky"
           color="default"
           elevation={0}
-          sx={{ bgcolor: "background.paper", borderBottom: "1px solid", borderColor: "divider" }}>
+          sx={{
+            bgcolor: "background.paper",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
           <Toolbar>
-            <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ mr: 2, display: { md: "none" } }}>
+            <IconButton
+              color="inherit"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { md: "none" } }}
+            >
               <MenuIcon />
             </IconButton>
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Tooltip title="Notifications">
                 <IconButton size="large" color="inherit">
-                  <Badge badgeContent={0} color="error"><NotificationsIcon /></Badge>
+                  <Badge badgeContent={0} color="error">
+                    <NotificationsIcon />
+                  </Badge>
                 </IconButton>
               </Tooltip>
               <Tooltip title="Profile">
                 <IconButton size="large" onClick={handleMenu} color="inherit">
                   <Avatar
                     alt={user?.name || "User"}
-                    sx={{ width: 34, height: 34, bgcolor: "primary.main", fontSize: 14, fontWeight: 700 }}
+                    sx={{
+                      width: 34,
+                      height: 34,
+                      bgcolor: "primary.main",
+                      fontSize: 14,
+                      fontWeight: 700,
+                    }}
                   >
                     {user?.name?.[0]?.toUpperCase() || "U"}
                   </Avatar>
                 </IconButton>
               </Tooltip>
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                <MenuItem onClick={() => { handleClose(); navigate("/dashboard/profile"); }}>
-                  <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>Profile
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    navigate("/dashboard/profile");
+                  }}
+                >
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  Profile
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
-                  <ListItemIcon><LogoutIcon fontSize="small" sx={{ color: "error.main" }} /></ListItemIcon>Logout
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" sx={{ color: "error.main" }} />
+                  </ListItemIcon>
+                  Logout
                 </MenuItem>
               </Menu>
             </Box>

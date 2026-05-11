@@ -99,7 +99,7 @@ const Register = () => {
       const payload = {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       };
       dispatch(register(payload));
     } else {

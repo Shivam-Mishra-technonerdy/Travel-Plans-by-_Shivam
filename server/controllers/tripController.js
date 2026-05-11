@@ -21,7 +21,9 @@ exports.createTrip = async (req, res) => {
     let images = [];
     if (destination) {
       // Find destination in DB by name case-insensitively
-      const dest = await Destination.findOne({ name: { $regex: new RegExp(`^${destination}$`, "i") } });
+      const dest = await Destination.findOne({
+        name: { $regex: new RegExp(`^${destination}$`, "i") },
+      });
       if (dest && dest.images && dest.images.length > 0) {
         images = dest.images;
       }
@@ -104,7 +106,9 @@ exports.updateTrip = async (req, res) => {
 
     // Update images if destination changed
     if (updateData.destination && updateData.destination !== trip.destination) {
-      const dest = await Destination.findOne({ name: { $regex: new RegExp(`^${updateData.destination}$`, "i") } });
+      const dest = await Destination.findOne({
+        name: { $regex: new RegExp(`^${updateData.destination}$`, "i") },
+      });
       if (dest && dest.images && dest.images.length > 0) {
         updateData.images = dest.images;
       }
@@ -113,7 +117,7 @@ exports.updateTrip = async (req, res) => {
     trip = await Trip.findByIdAndUpdate(
       req.params.id,
       { $set: updateData },
-      { new: true }
+      { new: true },
     );
 
     res.json(trip);

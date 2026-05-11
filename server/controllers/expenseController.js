@@ -125,7 +125,7 @@ exports.updateExpense = async (req, res) => {
     expense = await Expense.findByIdAndUpdate(
       req.params.id,
       { $set: expenseFields },
-      { new: true }
+      { new: true },
     );
 
     res.json(expense);

@@ -41,7 +41,7 @@ export const login = (userData) => async (dispatch) => {
       type: LOGIN_SUCCESS,
       payload: res.data, // res.data will contain the token
     });
-    
+
     // Set token to local storage
     localStorage.setItem("token", res.data.token);
 
@@ -66,7 +66,7 @@ export const register = (userData) => async (dispatch) => {
       type: REGISTER_SUCCESS,
       payload: res.data,
     });
-    
+
     // Set token to local storage
     localStorage.setItem("token", res.data.token);
 

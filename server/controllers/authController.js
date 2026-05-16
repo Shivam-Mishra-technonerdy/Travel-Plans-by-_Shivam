@@ -147,13 +147,16 @@ exports.forgotPassword = async (req, res, next) => {
 
     // Create reset url
     // Assumes frontend is running on localhost:3000 during dev or the deployed URL
-    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
     
-    // FOR LOCAL TESTING: Print the URL directly so the user can click it instantly!
-    console.log("\n=======================================================");
-    console.log("🚀 PASSWORD RESET LINK GENERATED:");
-    console.log(resetUrl);
-    console.log("=======================================================\n");
+    // Only print to console during local development for easy testing
+    if (process.env.NODE_ENV === "development") {
+      console.log("\n=======================================================");
+      console.log("🚀 DEV MODE: PASSWORD RESET LINK GENERATED");
+      console.log(resetUrl);
+      console.log("=======================================================\n");
+    }
 
     const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
 
@@ -165,12 +168,17 @@ exports.forgotPassword = async (req, res, next) => {
         message,
       });
 
-      res.status(200).json({ success: true, data: "Email sent (check backend terminal for link!)" });
+      res.status(200).json({ success: true, data: "Email sent successfully" });
     } catch (err) {
-      console.error("Email sending failed, but link is printed above!");
-      // We don't want to throw a 500 error here for local testing since we printed the link.
-      // In production, you might want to return a 500 error.
-      res.status(200).json({ success: true, data: "Check your backend terminal for the reset link!" });
+      console.error("Email sending failed:", err);
+      
+      // Reset the token fields since the email failed
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      // Return a proper 500 error in production
+      return res.status(500).json({ msg: "Email could not be sent. Please try again later." });
     }
   } catch (err) {
     next(err);

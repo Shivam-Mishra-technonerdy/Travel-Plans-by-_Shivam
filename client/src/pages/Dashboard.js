@@ -212,7 +212,7 @@ const Dashboard = () => {
             </Tooltip>
           </ListItem>
         ))}
-      </List>   
+      </List>
 
       <Divider />
       <List sx={{ px: 1, pb: 1 }}>

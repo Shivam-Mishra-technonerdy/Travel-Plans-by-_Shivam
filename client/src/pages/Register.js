@@ -17,7 +17,6 @@ import {
   Stepper,
   Step,
   StepLabel,
-  Grid,
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
@@ -26,7 +25,6 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CheckCircleOutlineIcon from "@mui/icons-material/TaskAlt";
 import ArrowForwardIcon from "@mui/icons-material/East";
 import ArrowBackIcon from "@mui/icons-material/West";
-import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 
@@ -39,6 +37,12 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     agreeTerms: false,
+  });
+  const [fieldErrors, setFieldErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
@@ -55,6 +59,54 @@ const Register = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  const handleGoogleCallback = (response) => {
+    // Google Sign-In disabled in this commit since googleLogin action
+    // is not present in authActions.js in the current repo.
+    // Keep this handler to avoid runtime errors.
+    console.log("Google callback received", response);
+  };
+
+  useEffect(() => {
+    // Only initialize Google Sign-In if activeStep is 0 (Personal Information / first step)
+    if (activeStep !== 0) return;
+
+    const initializeGoogleSignIn = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id:
+            process.env.REACT_APP_GOOGLE_CLIENT_ID ||
+            "643113382684-q82ot662op6kq7fnc1brg3ivclq3pmvk.apps.googleusercontent.com",
+          callback: handleGoogleCallback,
+        });
+
+        const googleBtn = document.getElementById("google-signin-btn");
+        if (googleBtn) {
+          window.google.accounts.id.renderButton(googleBtn, {
+            theme: "outline",
+            size: "large",
+            text: "signup_with",
+            width: isMobile ? 280 : 360,
+          });
+        }
+      }
+    };
+
+    initializeGoogleSignIn();
+
+    const script = document.querySelector(
+      'script[src="https://accounts.google.com/gsi/client"]',
+    );
+    if (script) {
+      script.addEventListener("load", initializeGoogleSignIn);
+    }
+
+    return () => {
+      if (script) {
+        script.removeEventListener("load", initializeGoogleSignIn);
+      }
+    };
+  }, [activeStep, isMobile, dispatch]);
+
   const steps = ["Personal Information", "Account Setup", "Confirmation"];
 
   const handleChange = (e) => {
@@ -65,6 +117,38 @@ const Register = () => {
       ...formData,
       [name]: newValue,
     });
+
+    const newErrors = { ...fieldErrors };
+    if (name === "firstName" || name === "lastName") {
+      // Real-time alphabetical name pre-validation
+      if (value && (!/^[A-Za-z\s]+$/.test(value) || value.trim().length < 1)) {
+        newErrors[name] = "Name can only contain letters and spaces";
+      } else {
+        newErrors[name] = "";
+      }
+    } else if (name === "email") {
+      // Real-time strict RFC 5322 email pre-validation
+      if (
+        value &&
+        !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+          value,
+        )
+      ) {
+        newErrors.email = "Please enter a valid email address";
+      } else {
+        newErrors.email = "";
+      }
+    } else if (name === "password") {
+      // Real-time strong password complexity pre-validation (min 8 chars, 1 upper, 1 lower, 1 num, 1 special)
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      if (value && !passwordRegex.test(value)) {
+        newErrors.password =
+          "Password must be at least 8 chars with atleast 1 uppercase, 1 lowercase, 1 number, and 1 special char";
+      } else {
+        newErrors.password = "";
+      }
+    }
+    setFieldErrors(newErrors);
 
     // Password match validation
     if (
@@ -97,7 +181,10 @@ const Register = () => {
     e.preventDefault();
     if (activeStep === steps.length - 1) {
       const payload = {
-        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`.replace(
+          /\s+/g,
+          " ",
+        ),
         email: formData.email,
         password: formData.password,
       };
@@ -107,15 +194,25 @@ const Register = () => {
     }
   };
 
+  // Dynamically disable Next/Create Account button when step fields are empty or invalid
   const isNextDisabled = () => {
     if (activeStep === 0) {
-      return !formData.firstName || !formData.lastName;
+      return (
+        !formData.firstName ||
+        formData.firstName.trim() === "" ||
+        !!fieldErrors.firstName ||
+        !formData.lastName ||
+        formData.lastName.trim() === "" ||
+        !!fieldErrors.lastName
+      );
     } else if (activeStep === 1) {
       return (
         !formData.email ||
+        !!fieldErrors.email ||
         !formData.password ||
+        !!fieldErrors.password ||
         !formData.confirmPassword ||
-        passwordError ||
+        !!passwordError ||
         !formData.agreeTerms
       );
     }
@@ -130,33 +227,33 @@ const Register = () => {
             <Typography variant="h6" sx={{ mb: 3 }}>
               Let's get to know you
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+              <TextField
+                autoComplete="given-name"
+                name="firstName"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+                value={formData.firstName}
+                onChange={handleChange}
+                error={!!fieldErrors.firstName}
+                helperText={fieldErrors.firstName}
+              />
+              <TextField
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="family-name"
+                value={formData.lastName}
+                onChange={handleChange}
+                error={!!fieldErrors.lastName}
+                helperText={fieldErrors.lastName}
+              />
+            </Box>
           </>
         );
       case 1:
@@ -174,6 +271,8 @@ const Register = () => {
               autoComplete="email"
               value={formData.email}
               onChange={handleChange}
+              error={!!fieldErrors.email}
+              helperText={fieldErrors.email}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -186,6 +285,8 @@ const Register = () => {
               autoComplete="new-password"
               value={formData.password}
               onChange={handleChange}
+              error={!!fieldErrors.password}
+              helperText={fieldErrors.password}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -413,20 +514,23 @@ const Register = () => {
             <form onSubmit={handleSubmit}>
               <Box sx={{ mb: 4 }}>{getStepContent(activeStep)}</Box>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  startIcon={<ArrowBackIcon />}
-                  sx={{ visibility: activeStep === 0 ? "hidden" : "visible" }}
-                >
-                  Back
-                </Button>
+              <Box sx={{ display: "flex", gap: 2 }}>
+                {activeStep > 0 && (
+                  <Button
+                    onClick={handleBack}
+                    startIcon={<ArrowBackIcon />}
+                    variant="outlined"
+                    sx={{ flex: 1, py: 1.5, borderRadius: 2, fontWeight: 600 }}
+                  >
+                    Back
+                  </Button>
+                )}
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
                   disabled={isNextDisabled()}
+                  sx={{ flex: 1, py: 1.5, borderRadius: 2, fontWeight: 600 }}
                   endIcon={
                     activeStep === steps.length - 1 ? (
                       <HowToRegIcon />
@@ -448,38 +552,25 @@ const Register = () => {
                   </Divider>
 
                   <Box
-                    sx={{ display: "flex", justifyContent: "center", gap: 2 }}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 2,
+                    }}
                   >
-                    <Button
-                      variant="outlined"
-                      startIcon={<GoogleIcon />}
-                      sx={{
-                        borderRadius: 2,
-                        py: 1,
-                        flexGrow: 1,
-                        color: "#DB4437",
-                        borderColor: "#DB4437",
-                        "&:hover": {
-                          borderColor: "#DB4437",
-                          backgroundColor: "rgba(219, 68, 55, 0.1)",
-                        },
-                      }}
-                    >
-                      Google
-                    </Button>
+                    <div id="google-signin-btn" />
                     <Button
                       variant="outlined"
                       startIcon={<FacebookIcon />}
+                      disabled
                       sx={{
                         borderRadius: 2,
                         py: 1,
-                        flexGrow: 1,
+                        width: isMobile ? 280 : 360,
                         color: "#4267B2",
                         borderColor: "#4267B2",
-                        "&:hover": {
-                          borderColor: "#4267B2",
-                          backgroundColor: "rgba(66, 103, 178, 0.1)",
-                        },
+                        opacity: 0.5,
                       }}
                     >
                       Facebook

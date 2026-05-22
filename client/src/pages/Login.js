@@ -19,13 +19,16 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LoginIcon from "@mui/icons-material/Login";
 
 const Login = () => {
   const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({
     email: "",
     password: "",
   });
@@ -44,20 +47,121 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  const handleGoogleCallback = (response) => {
+    // Google Sign-In disabled in this commit since googleLogin action
+    // is not present in authActions.js in the current repo.
+    // Keep this handler to avoid runtime errors.
+    console.log("Google callback received", response);
+  };
+
+  useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id:
+            "643113382684-q82ot662op6kq7fnc1brg3ivclq3pmvk.apps.googleusercontent.com",
+          callback: handleGoogleCallback,
+        });
+
+        const googleBtn = document.getElementById("google-signin-btn");
+        if (googleBtn) {
+          window.google.accounts.id.renderButton(googleBtn, {
+            theme: "outline",
+            size: "large",
+            text: "signin_with",
+            width: isMobile ? 280 : 360,
+          });
+        }
+      }
+    };
+
+    initializeGoogleSignIn();
+
+    const script = document.querySelector(
+      'script[src="https://accounts.google.com/gsi/client"]',
+    );
+    if (script) {
+      script.addEventListener("load", initializeGoogleSignIn);
+    }
+
+    return () => {
+      if (script) {
+        script.removeEventListener("load", initializeGoogleSignIn);
+      }
+    };
+  }, [isMobile, dispatch]);
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    if (name === "email") {
+      // Real-time strict RFC 5322 email pre-validation for login inputs
+      if (
+        value &&
+        !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+          value,
+        )
+      ) {
+        setErrors((prev) => ({ ...prev, email: "Please enter a valid email" }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    } else if (name === "password") {
+      if (!value || value.trim() === "") {
+        setErrors((prev) => ({ ...prev, password: "Password is required" }));
+      } else {
+        setErrors((prev) => ({ ...prev, password: "" }));
+      }
+    }
   };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
+  const validateForm = () => {
+    let isValid = true;
+    let tempErrors = { email: "", password: "" };
+
+    if (
+      !formData.email ||
+      !/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        formData.email,
+      )
+    ) {
+      tempErrors.email = "Please enter a valid email";
+      isValid = false;
+    }
+    if (!formData.password || formData.password.trim() === "") {
+      tempErrors.password = "Password is required";
+      isValid = false;
+    }
+
+    setErrors(tempErrors);
+    return isValid;
+  };
+
+  // Dynamically disable Sign In button when email or password fields are empty or invalid
+  const isSignInDisabled = () => {
+    return (
+      !formData.email ||
+      formData.email.trim() === "" ||
+      !!errors.email ||
+      !formData.password ||
+      formData.password.trim() === "" ||
+      !!errors.password
+    );
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login(formData, navigate));
+    if (validateForm()) {
+      dispatch(login(formData));
+    }
   };
 
   return (
@@ -189,6 +293,8 @@ const Login = () => {
                 autoFocus
                 value={formData.email}
                 onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
                 sx={{ mb: 3 }}
               />
               <TextField
@@ -202,6 +308,8 @@ const Login = () => {
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -254,6 +362,7 @@ const Login = () => {
                 fullWidth
                 variant="contained"
                 size="large"
+                disabled={isSignInDisabled()}
                 sx={{
                   py: 1.5,
                   mb: 3,
@@ -274,44 +383,41 @@ const Login = () => {
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
                   gap: 2,
                   mb: 3,
                 }}
               >
-                <IconButton
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 2,
-                    p: 1.5,
-                    color: "#DB4437",
-                  }}
-                >
-                  <GoogleIcon />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 2,
-                    p: 1.5,
-                    color: "#4267B2",
-                  }}
-                >
-                  <FacebookIcon />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 2,
-                    p: 1.5,
-                    color: "#1DA1F2",
-                  }}
-                >
-                  <TwitterIcon />
-                </IconButton>
+                <div id="google-signin-btn" />
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <IconButton
+                    disabled
+                    sx={{
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      p: 1.5,
+                      color: "#4267B2",
+                      opacity: 0.5,
+                    }}
+                  >
+                    <FacebookIcon />
+                  </IconButton>
+                  <IconButton
+                    disabled
+                    sx={{
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      p: 1.5,
+                      color: "#1DA1F2",
+                      opacity: 0.5,
+                    }}
+                  >
+                    <TwitterIcon />
+                  </IconButton>
+                </Box>
               </Box>
             </form>
           </Paper>

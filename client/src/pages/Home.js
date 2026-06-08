@@ -13,7 +13,7 @@ import { addRecentlyViewed } from "../utils/recentlyViewed";
 const REVIEWS = [
   {
     stars: "★★★★★",
-    quote: `"PackGo turned our anniversary trip into something we'll tell grandkids about. Every single detail was perfect — from the sunrise hike in Santorini to the candlelit dinner by the Aegean."`,
+    quote: `"PackGo turned our anniversary trip into something we'll tell grandkids about. Every single detail was perfect — from the sunrise hike in Santorini to the candlelit dinner by the Aeg[...]
     avatar: "PS",
     name: "Priya Sharma",
     loc: "Mumbai, India",
@@ -405,9 +405,7 @@ const Home = () => {
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(
-        localStorage.getItem(SEARCH_HISTORY_KEY) ?? "[]",
-      );
+      const saved = JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) ?? "[]");
       if (Array.isArray(saved)) {
         setRecentSearches(saved.filter((item) => typeof item === "string"));
       }
@@ -423,7 +421,7 @@ const Home = () => {
     const nextSearches = [
       normalized,
       ...recentSearches.filter(
-        (item) => item.toLowerCase() !== normalized.toLowerCase(),
+        (item) => item.toLowerCase() !== normalized.toLowerCase()
       ),
     ].slice(0, 5);
 
@@ -440,7 +438,7 @@ const Home = () => {
             ? r.data
             : Array.isArray(r.data?.destinations)
               ? r.data.destinations
-              : [],
+              : []
         );
         setLoading(false);
       })
@@ -475,7 +473,7 @@ const Home = () => {
         startDate: checkIn || today.toISOString().split("T")[0],
         endDate: next.toISOString().split("T")[0],
         description: `Trip to ${dest.city || dest.name}`,
-      }),
+      })
     );
     navigate("/dashboard/trips");
   };
@@ -499,7 +497,7 @@ const Home = () => {
           (d.name || "").toLowerCase().includes(where.toLowerCase()) ||
           (d.city || "").toLowerCase().includes(where.toLowerCase()) ||
           (d.state || "").toLowerCase().includes(where.toLowerCase()) ||
-          (d.category || "").toLowerCase().includes(where.toLowerCase()),
+          (d.category || "").toLowerCase().includes(where.toLowerCase())
       )
     : Array.isArray(destinations)
       ? destinations
@@ -834,7 +832,9 @@ const Home = () => {
               {loading
                 ? "Loading destinations…"
                 : where.trim()
-                  ? `${filteredDestinations.length} destination${filteredDestinations.length !== 1 ? "s" : ""} found`
+                  ? `${filteredDestinations.length} destination${
+                      filteredDestinations.length !== 1 ? "s" : ""
+                    } found`
                   : "Destinations that steal hearts"}
             </div>
           </div>

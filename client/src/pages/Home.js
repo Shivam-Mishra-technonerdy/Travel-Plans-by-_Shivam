@@ -10,9 +10,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import FAQSection from "../components/FAQSection";
 import RecentlyViewed from "../components/RecentlyViewed";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
-import TravellerSelector, {
-  formatTravellerSummary,
-} from "../components/TravellerSelector";
+import TravellerSelector from "../components/TravellerSelector";
 
 /* ── REVIEWS DATA FOR CAROUSEL ────────────────────────────── */
 const REVIEWS = [

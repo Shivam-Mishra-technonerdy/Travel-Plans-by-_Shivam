@@ -62,7 +62,10 @@ function App() {
               <Route path="/trip/share/:token" element={<SharedTripView />} />
               <Route path="/shared-trip/:token" element={<SharedTripView />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/verify-email/:token" element={<EmailVerification />} />
+              <Route
+                path="/verify-email/:token"
+                element={<EmailVerification />}
+              />
               <Route
                 path="/reset-password/:token"
                 element={<ResetPassword />}

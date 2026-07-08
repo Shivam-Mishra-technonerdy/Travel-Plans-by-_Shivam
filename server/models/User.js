@@ -85,14 +85,14 @@ const UserSchema = new mongoose.Schema(
     },
     resetPasswordExpire: Date,
     emailVerificationToken: {
-  type: String,
-  default: null,
-},
+      type: String,
+      default: null,
+    },
 
-emailVerificationExpire: {
-  type: Date,
-  default: null,
-},
+    emailVerificationExpire: {
+      type: Date,
+      default: null,
+    },
   },
   {
     toJSON: {
@@ -160,17 +160,15 @@ UserSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-
 UserSchema.methods.getEmailVerificationToken = function () {
-
   //generate 20 random bytes and convert to string
-   const token = crypto.randomBytes(20).toString("hex");
-//hash the token
+  const token = crypto.randomBytes(20).toString("hex");
+  //hash the token
   this.emailVerificationToken = crypto
     .createHash("sha256")
     .update(token)
     .digest("hex");
-//set expiry time
+  //set expiry time
   this.emailVerificationExpire = Date.now() + 24 * 60 * 60 * 1000;
 
   return token;

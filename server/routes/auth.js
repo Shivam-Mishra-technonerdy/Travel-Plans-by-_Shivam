@@ -57,5 +57,4 @@ router.post("/forgot-password", requireDb, authController.forgotPassword);
 // @access  Public
 router.put("/reset-password/:token", requireDb, authController.resetPassword);
 
-
 module.exports = router;

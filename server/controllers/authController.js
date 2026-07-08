@@ -56,22 +56,22 @@ exports.register = async (req, res, next) => {
 
     // await user.save();
     // Generate verification token
-const verificationToken = user.getEmailVerificationToken();
-console.log("Verification Token:", verificationToken);
+    const verificationToken = user.getEmailVerificationToken();
+    console.log("Verification Token:", verificationToken);
 
-// Save user with verification token
-await user.save();
+    // Save user with verification token
+    await user.save();
 
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
-const verifyUrl = `${frontendUrl}/verify-email/${verificationToken}`;
+    const verifyUrl = `${frontendUrl}/verify-email/${verificationToken}`;
 
-// Send verification email
-await sendEmail({
-  email: user.email,
-  subject: "Verify Your Email",
-  message: `Please verify your email by clicking the following link: ${verifyUrl}`,
-});
+    // Send verification email
+    await sendEmail({
+      email: user.email,
+      subject: "Verify Your Email",
+      message: `Please verify your email by clicking the following link: ${verifyUrl}`,
+    });
 
     res.status(201).json({
       success: true,
@@ -117,11 +117,11 @@ exports.login = async (req, res, next) => {
     }
     //prevents unverified user
     if (!user.isVerified) {
-  return res.status(403).json({
-    success: false,
-    msg: "Please verify your email before logging in.",
-  });
-}
+      return res.status(403).json({
+        success: false,
+        msg: "Please verify your email before logging in.",
+      });
+    }
 
     // Create JWT token
     const payload = { user: { id: user.id } };
@@ -149,13 +149,12 @@ exports.verifyEmail = async (req, res, next) => {
       .update(req.params.token)
       .digest("hex");
 
-      console.log("Received Token:", req.params.token);
-console.log("Hashed Token:", token);
+    console.log("Received Token:", req.params.token);
+    console.log("Hashed Token:", token);
 
-const allUsers = await User.find({}, "email emailVerificationToken");
-console.log(allUsers);
+    const allUsers = await User.find({}, "email emailVerificationToken");
+    console.log(allUsers);
     const user = await User.findOne({
-
       emailVerificationToken: token,
       emailVerificationExpire: { $gt: Date.now() },
     });

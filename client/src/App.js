@@ -19,7 +19,10 @@ import SharedTripView from "./pages/dashboard/SharedTripView";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
-import Contact from "./pages/contact"; // ✅ ADDED
+import Contact from "./pages/contact"; //
+import TermsConditions from "./pages/TermsConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import HelpCenter from "./pages/HelpCenter";
 import PrivateRoute from "./components/PrivateRoute";
 import ScrollButtons from "./components/ScrollButtons";
 import ScrollToTop from "./components/ScrollToTop";
@@ -27,6 +30,7 @@ import { loadUser } from "./redux/actions/authActions";
 import { flushOfflineQueue } from "./redux/actions/offlineQueueActions";
 import About from "./pages/About"; // <-- ADD THIS IMPORT
 import TravelChecklist from "./components/TravelChecklist";
+import EmailVerification from "./pages/EmailVerification";
 
 if (process.env.NODE_ENV === "development") {
   window.store = store;
